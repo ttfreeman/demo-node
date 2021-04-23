@@ -4,11 +4,14 @@ pipeline {
     }
 
     stages {
-        agent { docker { 
-            label 'docker'
-            image 'node:14-alpine' 
-        } }
+
         stage('build') {
+            agent { 
+                docker { 
+                  label 'docker'
+                  image 'node:14-alpine' 
+              } 
+            }
             steps {
                 sh 'npm --version'
             }
