@@ -8,7 +8,7 @@ pipeline {
                     // label "${env.BRANCH_NAME}-node"
                     containerTemplate {
                         name 'node'
-                        image 'node:-jessie'
+                        image 'node:15.14.0-alpine3.10'
                         ttyEnabled true
                         command 'cat'
                     }
