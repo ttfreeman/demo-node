@@ -10,7 +10,7 @@ pipeline {
         spec:
           containers:
           - name: nodejs
-            image: 15.14.0-alpine3.10
+            image: node:15.14.0-alpine3.10
             command:
             - cat
             tty: true
