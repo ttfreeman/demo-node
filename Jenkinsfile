@@ -7,13 +7,13 @@
 
 //Defines the build CI pipeline for app
 pipeline {
-    agent { 
-        kubernetes {
-            label 'app'
-            defaultContainer 'jnlp'
-            yamlFile 'Jenkins.yaml' 
-        }
-    }
+    // agent { 
+    //     kubernetes {
+    //         label 'app'
+    //         defaultContainer 'jnlp'
+    //         yamlFile 'Jenkins.yaml' 
+    //     }
+    // }
     
     environment {
             DOCKER_REGISTRY= 'docker.io'
