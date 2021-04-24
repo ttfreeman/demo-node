@@ -30,6 +30,7 @@ pipeline {
           node --version
           pwd
           ls -la
+          npm install
           '''
         }
         container('busybox') {
