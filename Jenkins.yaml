@@ -1,0 +1,61 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    Application: app
+spec:
+  containers:
+  - name: docker
+    image: docker:1.11
+    command: ['cat']
+    tty: true
+    env:
+    - name: NODE_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.hostIP
+    volumeMounts:
+    - name: dockersock
+      mountPath: /var/run/docker.sock
+  - name: nodejs
+    image: node:15.14.0-alpine3.10
+    tty: true
+    command: ['cat']
+    env:
+    - name: NODE_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.hostIP
+    volumeMounts:
+    - name: dockersock
+      mountPath: /var/run/docker.sock
+  - name: sonar
+    image: sonarsource/sonar-scanner-cli
+    tty: true
+    command: ['cat']
+    env:
+    - name: NODE_IP
+      valueFrom:
+        fieldRef:
+          fieldPath: status.hostIP
+    volumeMounts:
+    - name: dockersock
+      mountPath: /var/run/docker.sock
+  # - name: python
+  #   image: hub.docker.com/shubhamkr619/python-testing-image:v1
+  #   tty: true
+  #   command: ['cat']
+  #   env:
+  #   - name: NODE_IP
+  #     valueFrom:
+  #       fieldRef:
+  #         fieldPath: status.hostIP
+  #   - name: APP_SETTINGS
+  #     value: "config.ProductionConfig"
+  #   volumeMounts:
+  #   - name: dockersock
+  #     mountPath: /var/run/docker.sock
+  volumes:
+  - name: dockersock
+    hostPath:
+      path: /var/run/docker.sock
