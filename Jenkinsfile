@@ -14,6 +14,9 @@ pipeline {
             command:
             - cat
             tty: true
+            volumeMounts:
+            - mountPath: /var/run/docker.sock
+              name: docker-sock
           - name: docker
             image: docker:latest
             command:
@@ -22,8 +25,6 @@ pipeline {
             volumeMounts:
             - mountPath: /var/run/docker.sock
               name: docker-sock
-            // securityContext:
-            //   privileged: true
           volumes:
             - name: docker-sock
               hostPath:
@@ -55,18 +56,18 @@ pipeline {
           '''
         }
       }
-    stage('Build Image') {
-      steps {
-        // container('docker') {
-        //   sh '''
-        //   docker --version
-        //   docker info
-        //   pwd
-        //   ls -la
-        //   docker build -t demo-node:$BUILD_NUMBER .
-        //   '''
-        // }
-      }
-    }
+    // stage('Build Image') {
+    //   steps {
+    //     container('docker') {
+    //       sh '''
+    //       docker --version
+    //       docker info
+    //       pwd
+    //       ls -la
+    //       docker build -t demo-node:$BUILD_NUMBER .
+    //       '''
+    //     }
+    //   }
+    // }
   }
 }
