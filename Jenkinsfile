@@ -44,18 +44,18 @@ pipeline {
           '''
         }
       }
-    stage('Test') {
-      steps {
-        container('docker') {
-          sh '''
-          docker --version
-          docker info
-          pwd
-          ls -la
-          docker build -t demo-node:$BUILD_NUMBER .
-          '''
-        }
-      }
+    // stage('Test') {
+    //   steps {
+    //     container('docker') {
+    //       sh '''
+    //       docker --version
+    //       docker info
+    //       pwd
+    //       ls -la
+    //       docker build -t demo-node:$BUILD_NUMBER .
+    //       '''
+    //     }
+    //   }
     // stage('Build Image') {
     //   steps {
     //     container('docker') {
