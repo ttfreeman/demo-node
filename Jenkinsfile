@@ -26,9 +26,11 @@ pipeline {
     stage('Run nodejs') {
       steps {
         container('nodejs') {
-          sh 'node --version'
-          sh "echo Workspace dir is ${pwd()}"
-          sh "echo Workspace content is ${ls()}"
+          sh '''
+          node --version
+          echo Workspace dir is ${pwd()}
+          ls -la
+          '''
         }
         container('busybox') {
           sh '/bin/busybox'
