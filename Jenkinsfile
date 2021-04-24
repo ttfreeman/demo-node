@@ -15,10 +15,18 @@ pipeline {
             - cat
             tty: true
           - name: docker
-            image: docker:dind
+            image: docker:latest
             command:
             - cat
             tty: true
+            volumeMounts:
+            - mountPath: /var/run/docker.sock
+              name: docker-sock
+          volumes:
+            - name: docker-sock
+              hostPath:
+              path: /var/run/docker.sock
+
         """.stripIndent()
     }
   }
@@ -35,9 +43,10 @@ pipeline {
         container('docker') {
           sh '''
           docker --version
+          docker info
           pwd
           ls -la
-          docker build .
+          docker build -t demo-node:$BUILD_NUMBER .
           '''
         }
       }
