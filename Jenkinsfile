@@ -28,7 +28,7 @@ pipeline {
         container('nodejs') {
           sh '''
           node --version
-          echo Workspace dir is ${pwd()}
+          pwd
           ls -la
           '''
         }
