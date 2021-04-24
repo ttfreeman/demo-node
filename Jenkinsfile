@@ -14,8 +14,8 @@ pipeline {
             command:
             - cat
             tty: true
-          - name: busybox
-            image: busybox
+          - name: docker
+            image: docker:dind
             command:
             - cat
             tty: true
@@ -33,8 +33,13 @@ pipeline {
           npm install
           '''
         }
-        container('busybox') {
-          sh '/bin/busybox'
+        container('docker') {
+          sh '''
+          docker --version
+          pwd
+          ls -la
+          docker build .
+          '''
         }
       }
     }
