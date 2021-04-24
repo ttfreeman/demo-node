@@ -26,7 +26,7 @@ pipeline {
     stage('Run nodejs') {
       steps {
         container('nodejs') {
-          sh 'node -version'
+          sh 'node --version'
           sh "echo Workspace dir is ${pwd()}"
           sh "echo Workspace content is ${ls()}"
         }
