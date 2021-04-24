@@ -8,7 +8,7 @@ pipeline {
                     // label "${env.BRANCH_NAME}-node"
                     containerTemplate {
                         name 'node'
-                        image 'node:8-jessie'
+                        image 'node:-jessie'
                         ttyEnabled true
                         command 'cat'
                     }
@@ -16,7 +16,10 @@ pipeline {
             }
             steps {
                 container('node') {
-                    sh 'npm install'
+                    sh "echo ${whoami}"
+                    sh "echo ${pwd}"
+                    sh "echo ${ls -la}"
+                    // sh 'npm install'
                 }
                 echo "${env.JOB_NAME}"
             }
