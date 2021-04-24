@@ -1,20 +1,26 @@
 pipeline {
-    agent {
-      label 'docker' 
-    }
+    agent any
 
     stages {
-
-        stage('build') {
-            agent { 
-                docker { 
-                  label 'docker'
-                  image 'node:14-alpine' 
-              } 
+        stage('Initialize') {
+            agent {
+                kubernetes {
+                    // label "${env.BRANCH_NAME}-node"
+                    containerTemplate {
+                        name 'node'
+                        image 'node:8-jessie'
+                        ttyEnabled true
+                        command 'cat'
+                    }
+                }
             }
             steps {
-                sh 'npm --version'
+                container('node') {
+                    sh 'npm install -g serverless'
+                }
+                echo "${env.JOB_NAME}"
             }
         }
+        
     }
 }
