@@ -17,6 +17,19 @@ pipeline {
             volumeMounts:
             - mountPath: /var/run/docker.sock
               name: docker-sock
+          - name: sonar
+            image: sonarsource/sonar-scanner-cli
+            command:
+            - cat
+            env:
+            - name: SONAR_HOST_URL
+              value: https://sonarqube-dbbsbxarmnsp001.apps.mj0pbxvw.westus2.aroapp.io/projects
+            - name: SONAR_LOGIN
+              value: 9ff1a72d0d927c4b0b57a67f51321f8490c3115f
+            tty: true
+            volumeMounts:
+            - mountPath: /var/run/docker.sock
+              name: docker-sock
           - name: docker
             image: docker:latest
             command:
@@ -44,18 +57,18 @@ pipeline {
           '''
         }
       }
-    // stage('Test') {
-    //   steps {
-    //     container('docker') {
-    //       sh '''
-    //       docker --version
-    //       docker info
-    //       pwd
-    //       ls -la
-    //       docker build -t demo-node:$BUILD_NUMBER .
-    //       '''
-    //     }
-    //   }
+    }
+    stage('Test') {
+      steps {
+        container('sonar') {
+          sh '''
+          pwd
+          ls -la
+          sonar-scanner
+          '''
+        }
+      }
+    }
     // stage('Build Image') {
     //   steps {
     //     container('docker') {
@@ -68,6 +81,6 @@ pipeline {
     //       '''
     //     }
     //   }
-    }
+    // }
   }
 }
