@@ -23,7 +23,7 @@ pipeline {
             - cat
             env:
             - name: SONAR_HOST_URL
-              value: https://sonarqube-dbbsbxarmnsp001.apps.mj0pbxvw.westus2.aroapp.io/projects
+              value: https://sonarqube-dbbsbxarmnsp001.apps.mj0pbxvw.westus2.aroapp.io
             - name: SONAR_LOGIN
               value: 9ff1a72d0d927c4b0b57a67f51321f8490c3115f
             tty: true
@@ -64,7 +64,7 @@ pipeline {
           sh '''
           pwd
           ls -la
-          sonar-scanner -Dsonar.projectKey=myproject
+          sonar-scanner
           '''
         }
       }
