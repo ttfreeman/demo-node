@@ -64,7 +64,7 @@ pipeline {
           sh '''
           pwd
           ls -la
-          sonar-scanner
+          sonar-scanner -Dsonar.projectKey=myproject
           '''
         }
       }

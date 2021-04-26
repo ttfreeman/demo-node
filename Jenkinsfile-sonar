@@ -1,0 +1,36 @@
+pipeline {
+  agent none
+  stages {
+    stage('Aproval Stage') {
+        steps {
+        input id: "ic01", message: "Continue pipeline?", submitter: "user@suncor.com-admin-edit-view", submitterParameter: "approvingSubmitter"
+        }
+    }
+    stage('Scan Codebase') {
+      agent { label 'maven' }
+      steps {
+        withSonarQubeEnv('SonarQube-Server') {
+          git url: 'https://github.com/SonarSource/sonar-scanning-examples.git'
+          dir("sonarqube-scanner-maven/maven-multimodule") {
+            sh 'mvn org.sonarsource.scanner.maven:sonar-maven-plugin:3.6.0.1398:sonar'
+          }
+        }
+      }
+    }
+    stage('Quality Gate') {
+      steps {
+        script {
+          def qg = waitForQualityGate() 
+          if (qg.status != 'OK') {
+            input message: "Continue pipeline?", submitter: "user@suncor.com-admin-edit-view", submitterParameter: "approvingSubmitter"
+          }
+        }    
+      }
+    }
+     stage('Message Stage') {
+         steps {
+         echo "The Scan Codebase stage has passed"
+         }
+     }
+  }
+}
