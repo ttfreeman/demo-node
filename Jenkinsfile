@@ -31,18 +31,35 @@ pipeline {
             - mountPath: /var/run/docker.sock
               name: docker-sock
           - name: docker
-            image: docker:latest
+            image: docker:dind
             command:
             - cat
             tty: true
+            securityContext:
+              privileged: true
             volumeMounts:
             - mountPath: /var/run/docker.sock
               name: docker-sock
+          - name: kaniko
+            image: gcr.io/kaniko-project/executor:debug-539ddefcae3fd6b411a95982a830d987f4214251
+            imagePullPolicy: Always
+            command:
+            - /busybox/cat
+            tty: true
+            volumeMounts:
+              - name: jenkins-docker-cfg
+                mountPath: /kaniko/.docker
           volumes:
             - name: docker-sock
-              hostPath:
-              path: /var/run/docker.sock
-              type: File
+              emptyDir: {}
+            - name: jenkins-docker-cfg
+              projected:
+                sources:
+                - secret:
+                    name: regcred
+                    items:
+                      - key: .dockerconfigjson
+                        path: config.json
         """.stripIndent()
     }
   }
@@ -58,7 +75,7 @@ pipeline {
         }
       }
     }
-    stage('Test') {
+    stage('Sonar Test') {
       steps {
         container('sonar') {
           sh '''
@@ -69,18 +86,24 @@ pipeline {
         }
       }
     }
-    // stage('Build Image') {
-    //   steps {
-    //     container('docker') {
-    //       sh '''
-    //       docker --version
-    //       docker info
-    //       pwd
-    //       ls -la
-    //       docker build -t demo-node:$BUILD_NUMBER .
-    //       '''
-    //     }
-    //   }
-    // }
+    stage('Kaniko Build') {
+      steps {
+      container('kaniko') {
+        sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=mydockerregistry:5000/myorg/myimage'
+      }
+      }
+    }
+    stage('Docker Build') {
+      steps {
+        container('docker') {
+          sh '''
+          docker --version
+          ls -la
+          whoami
+          docker build -t demo-node:$BUILD_NUMBER .
+          '''
+        }
+      }
+    }
   }
 }
