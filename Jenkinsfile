@@ -35,13 +35,11 @@ pipeline {
             command:
             - cat
             tty: true
-            securityContext:
-              privileged: true
             volumeMounts:
             - mountPath: /var/run/docker.sock
               name: docker-sock
           - name: kaniko
-            image: gcr.io/kaniko-project/executor:debug-539ddefcae3fd6b411a95982a830d987f4214251
+            image: gcr.io/kaniko-project/executor:debug
             imagePullPolicy: Always
             command:
             - /busybox/cat
@@ -49,6 +47,12 @@ pipeline {
             volumeMounts:
               - name: jenkins-docker-cfg
                 mountPath: /kaniko/.docker
+          - name: oc
+            image: ebits/openshift-client
+            imagePullPolicy: Always
+            command:
+            - cat
+            tty: true
           volumes:
             - name: docker-sock
               emptyDir: {}
@@ -86,21 +90,37 @@ pipeline {
         }
       }
     }
-    stage('Kaniko Build') {
+    // stage('Kaniko Build') {
+    //   steps {
+    //     container('kaniko') {
+    //       sh '''
+    //         /kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --destination=suncorenergy-devops.jfrog.io/demo-node:$BUILD_NUMBER
+    //       '''
+    //     }
+    //   }
+    // }
+    // stage('Docker Build') {
+    //   steps {
+    //     container('docker') {
+    //       sh '''
+    //       docker --version
+    //       ls -la
+    //       whoami
+    //       docker build -t demo-node:$BUILD_NUMBER .
+    //       '''
+    //     }
+    //   }
+    // }
+    stage('Run oc') {
       steps {
-      container('kaniko') {
-        sh '/kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --cache=true --destination=mydockerregistry:5000/myorg/myimage'
-      }
-      }
-    }
-    stage('Docker Build') {
-      steps {
-        container('docker') {
+        container('oc') {
           sh '''
-          docker --version
+          oc --version
           ls -la
           whoami
-          docker build -t demo-node:$BUILD_NUMBER .
+          pwd
+          oc login --token=sha256~VXe0OlJSM-7oGI6f-_IAQo8Zf_SVewEFVacCyjSScqk --server=https://api.mj0pbxvw.westus2.aroapp.io:6443
+          oc new-app `pwd` --strategy=docker
           '''
         }
       }
