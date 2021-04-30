@@ -115,11 +115,11 @@ pipeline {
       steps {
         container('oc') {
           sh '''
-          oc --version
+          oc version
           ls -la
           whoami
           pwd
-          oc login --token=sha256~VXe0OlJSM-7oGI6f-_IAQo8Zf_SVewEFVacCyjSScqk --server=https://api.mj0pbxvw.westus2.aroapp.io:6443
+          KUBECONFIG=/home/jenkins/workspace/demo-node_master/config oc login --token=sha256~veEfJt4PNsobIHhG_RExfWUbROXAihhNnaddNa0-j-E --server=https://api.mj0pbxvw.westus2.aroapp.io:6443
           oc delete bc,dc,deployment,svc,route -l app=demo-node 
           oc new-build . --name=demo-node --strategy=docker
           oc start-build demo-node --wait=true
