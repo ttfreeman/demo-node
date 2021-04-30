@@ -120,7 +120,13 @@ pipeline {
           whoami
           pwd
           oc login --token=sha256~VXe0OlJSM-7oGI6f-_IAQo8Zf_SVewEFVacCyjSScqk --server=https://api.mj0pbxvw.westus2.aroapp.io:6443
-          oc new-app `pwd` --strategy=docker
+          oc delete bc,dc,deployment,svc,route -l app=demo-node 
+          oc new-build . --name=demo-node --strategy=docker
+          oc start-build demo-node --wait=true
+
+          oc new-app demo-node:latest
+          oc expose svc/demo-node
+
           '''
         }
       }
