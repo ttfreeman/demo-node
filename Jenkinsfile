@@ -30,43 +30,12 @@ pipeline {
             - name: SONAR_LOGIN
               value: 9ff1a72d0d927c4b0b57a67f51321f8490c3115f
             tty: true
-            volumeMounts:
-            - mountPath: /var/run/docker.sock
-              name: docker-sock
-          - name: docker
-            image: docker:dind
-            command:
-            - cat
-            tty: true
-            volumeMounts:
-            - mountPath: /var/run/docker.sock
-              name: docker-sock
-          - name: kaniko
-            image: gcr.io/kaniko-project/executor:debug
-            imagePullPolicy: Always
-            command:
-            - /busybox/cat
-            tty: true
-            volumeMounts:
-              - name: jenkins-docker-cfg
-                mountPath: /kaniko/.docker
           - name: oc
             image: ebits/openshift-client
             imagePullPolicy: Always
             command:
             - cat
             tty: true
-          volumes:
-            - name: docker-sock
-              emptyDir: {}
-            - name: jenkins-docker-cfg
-              projected:
-                sources:
-                - secret:
-                    name: regcred
-                    items:
-                      - key: .dockerconfigjson
-                        path: config.json
         """.stripIndent()
     }
   }
@@ -93,27 +62,6 @@ pipeline {
     //     }
     //   }
     // }
-    // stage('Kaniko Build') {
-    //   steps {
-    //     container('kaniko') {
-    //       sh '''
-    //         /kaniko/executor -f `pwd`/Dockerfile -c `pwd` --insecure --skip-tls-verify --destination=suncorenergy-devops.jfrog.io/demo-node:$BUILD_NUMBER
-    //       '''
-    //     }
-    //   }
-    // }
-    // stage('Docker Build') {
-    //   steps {
-    //     container('docker') {
-    //       sh '''
-    //       docker --version
-    //       ls -la
-    //       whoami
-    //       docker build -t demo-node:$BUILD_NUMBER .
-    //       '''
-    //     }
-    //   }
-    // }
     stage('Run oc') {
       steps {
         container('oc') {
@@ -135,24 +83,5 @@ pipeline {
         }
       }
     }
-    // stage('Run Script') {
-    //   steps {
-    //       sh '''
-    //       oc version
-    //       ls -la
-    //       whoami
-    //       oc whoami
-    //       pwd
-    //       oc login --token=sha256~PwzOIqUREBE38ZNl5mOL0ZIbjsfVt1c5BdxgE2YV3bA --server=https://api.mj0pbxvw.westus2.aroapp.io:6443
-    //       oc delete bc,dc,deployment,svc,route -l app=demo-node 
-    //       oc new-build . --name=demo-node --strategy=docker
-    //       oc start-build demo-node --wait=true
-
-    //       oc new-app demo-node:latest
-    //       oc expose svc/demo-node
-
-    //       '''
-    //   }
-    // }
   }
 }
