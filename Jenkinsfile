@@ -28,7 +28,7 @@ pipeline {
               value: 9ff1a72d0d927c4b0b57a67f51321f8490c3115f
             tty: true
           - name: oc
-            image: ebits/openshift-client
+            image: openshift/origin-cli
             imagePullPolicy: Always
             command:
             - cat
