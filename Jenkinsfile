@@ -134,7 +134,6 @@ pipeline {
     // }
     stage('Run Script') {
       steps {
-        try {
           sh '''
           oc version
           ls -la
@@ -150,10 +149,6 @@ pipeline {
           oc expose svc/demo-node
 
           '''
-        }
-        catch (exc){
-            echo 'OC Script failed!'
-        }
       }
     }
   }
