@@ -153,7 +153,6 @@ pipeline {
         }
         catch (exc){
             echo 'OC Script failed!'
-            throw
         }
       }
     }
