@@ -7,6 +7,9 @@ pipeline {
         metadata:
           labels:
             some-label: some-label-value
+        securityContext: 
+          allowPrivilegeEscalation: false
+          runAsUser: 0
         spec:
           containers:
           - name: nodejs
@@ -79,17 +82,17 @@ pipeline {
         }
       }
     }
-    stage('Sonar Test') {
-      steps {
-        container('sonar') {
-          sh '''
-          pwd
-          ls -la
-          sonar-scanner
-          '''
-        }
-      }
-    }
+    // stage('Sonar Test') {
+    //   steps {
+    //     container('sonar') {
+    //       sh '''
+    //       pwd
+    //       ls -la
+    //       sonar-scanner
+    //       '''
+    //     }
+    //   }
+    // }
     // stage('Kaniko Build') {
     //   steps {
     //     container('kaniko') {
