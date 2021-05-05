@@ -111,36 +111,16 @@ pipeline {
     //     }
     //   }
     // }
-    // stage('Run oc') {
-    //   steps {
-    //     container('oc') {
-    //       sh '''
-    //       oc version
-    //       ls -la
-    //       whoami
-    //       oc whoami
-    //       pwd
-    //       oc login --token=sha256~veEfJt4PNsobIHhG_RExfWUbROXAihhNnaddNa0-j-E --server=https://api.mj0pbxvw.westus2.aroapp.io:6443
-    //       oc delete bc,dc,deployment,svc,route -l app=demo-node 
-    //       oc new-build . --name=demo-node --strategy=docker
-    //       oc start-build demo-node --wait=true
-
-    //       oc new-app demo-node:latest
-    //       oc expose svc/demo-node
-
-    //       '''
-    //     }
-    //   }
-    // }
-    stage('Run Script') {
+    stage('Run oc') {
       steps {
+        container('oc') {
           sh '''
           oc version
           ls -la
           whoami
           oc whoami
           pwd
-          oc login --token=sha256~PwzOIqUREBE38ZNl5mOL0ZIbjsfVt1c5BdxgE2YV3bA --server=https://api.mj0pbxvw.westus2.aroapp.io:6443
+          oc login --token=sha256~veEfJt4PNsobIHhG_RExfWUbROXAihhNnaddNa0-j-E --server=https://api.mj0pbxvw.westus2.aroapp.io:6443
           oc delete bc,dc,deployment,svc,route -l app=demo-node 
           oc new-build . --name=demo-node --strategy=docker
           oc start-build demo-node --wait=true
@@ -149,7 +129,27 @@ pipeline {
           oc expose svc/demo-node
 
           '''
+        }
       }
     }
+    // stage('Run Script') {
+    //   steps {
+    //       sh '''
+    //       oc version
+    //       ls -la
+    //       whoami
+    //       oc whoami
+    //       pwd
+    //       oc login --token=sha256~PwzOIqUREBE38ZNl5mOL0ZIbjsfVt1c5BdxgE2YV3bA --server=https://api.mj0pbxvw.westus2.aroapp.io:6443
+    //       oc delete bc,dc,deployment,svc,route -l app=demo-node 
+    //       oc new-build . --name=demo-node --strategy=docker
+    //       oc start-build demo-node --wait=true
+
+    //       oc new-app demo-node:latest
+    //       oc expose svc/demo-node
+
+    //       '''
+    //   }
+    // }
   }
 }
