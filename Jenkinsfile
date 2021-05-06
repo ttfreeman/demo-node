@@ -29,12 +29,18 @@ pipeline {
             tty: true
           - name: oc
             image: openshift/origin-cli
+            securityContext:
+              runAsUser: 0
             imagePullPolicy: Always
             command:
             - cat
             tty: true
         """.stripIndent()
     }
+  }
+  environment {
+      OC_TOKEN = credentials('openshift_token')
+      DOCKER_SECRET = credentials('docker_secret')
   }
   stages {
     stage('Run nodejs') {
@@ -68,9 +74,12 @@ pipeline {
           whoami
           oc whoami
           pwd
-          oc login --token=sha256~veEfJt4PNsobIHhG_RExfWUbROXAihhNnaddNa0-j-E --server=https://api.mj0pbxvw.westus2.aroapp.io:6443
+          oc login --token=${OC_TOKEN} --server=https://api.mj0pbxvw.westus2.aroapp.io:6443
           oc delete bc,dc,deployment,svc,route -l app=demo-node 
-          oc new-build . --name=demo-node --strategy=docker
+          oc delete bc,dc,deployment,svc,route -l build=demo-node
+          
+          oc new-build --name=demo-node --strategy=docker --to="ttfreeman/demo-node" --to-docker=true --push-secret="1460b877-da01-43e3-ac51-cc1daded720e" 
+          oc get bc
           oc start-build demo-node --wait=true
 
           oc new-app demo-node:latest
